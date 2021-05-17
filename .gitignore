@@ -1,5 +1,5 @@
 /carla
 /perception/checkpoints/yolov4-416/assets
 /perception/checkpoints/yolov4-416/variables
-/perception/checkpoints/yolov4-416/save_model.pb
-/CULane/*
+/perception/checkpoints/yolov4-416/saved_model.pb
+/CULane/**/
