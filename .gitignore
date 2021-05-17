@@ -1,4 +1,4 @@
-/Object Detection/weights/yolov3.weights
-/Object Detection/weights/yolov3-tiny.weights
-/Object Detection/cfg/yolov3.cfg
-/Object Detection/cfg/yolov3-tiny.cfg
+/carla
+/perception/checkpoints/yolov4-416
+/perception/checkpoints/yolov4-416/save_model.pb
+/CULane
