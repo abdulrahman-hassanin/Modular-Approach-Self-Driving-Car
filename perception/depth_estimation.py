@@ -71,3 +71,16 @@ class DepthEstimation():
         closest_point_depth = obstacle_depth.min()
 
         return closest_point_depth
+    
+    def clac_distance_bbox_width(self, bbox_width):
+        if bbox_width > 80:
+            depth = ((-1 / 33) * bbox_width ) + 12
+            return max(depth, 0.5)
+        elif bbox_width > 40:
+            depth = ((-0.125) * bbox_width ) + 20
+            return depth 
+        elif bbox_width > 10:
+            depth = ((-0.6) * bbox_width ) + 36
+            return depth
+   
+        return 0
