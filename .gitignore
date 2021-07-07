@@ -3,4 +3,3 @@
 /perception/checkpoints/yolov4-416/variables
 /perception/checkpoints/yolov4-416/saved_model.pb
 /perception/CULane/*
-/carla/dist/carla-0.9.10-py3.7-win-amd64.egg
