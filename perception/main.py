@@ -41,7 +41,7 @@ def render(display, image_left, image_right):
         depth_map = depth_estimator.calc_depth_map(disp_left)
 
         pred_bboxes = obj_detector.detect(img_left)
-        array = obj_detector.draw_bbox(img_left, pred_bboxes, depth_map, show_label=False)
+        array = obj_detector.draw_bbox(img_left, pred_bboxes, depth_map, show_label=False, Depth_by_bbox=False)
         #array = depth_estimator.put_distance_txt(array, depth_map, pred_bboxes, obj_detector.classes, obj_detector.allowed_classes)
 
         array = array[:, :, ::-1]
