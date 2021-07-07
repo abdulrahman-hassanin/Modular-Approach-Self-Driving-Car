@@ -1,9 +1,10 @@
-import tensorflow as tf
-from tensorflow.python.saved_model import tag_constants
-import numpy as np
 import cv2
 import colorsys
 import random
+
+import depth_estimation
+
+depth_estimator = depth_estimation.DepthEstimation()
 
 physical_devices = tf.config.experimental.list_physical_devices('GPU')
 if len(physical_devices) > 0:
@@ -17,7 +18,7 @@ class ObjectDetection(object):
         self.YOLO_model = self.load_yolo()
         self.img = None
         self.classes = self.read_class_names("./classes/coco.names")
-        self.allowed_classes = list(self.read_class_names("./classes/coco.names").values())
+        self.allowed_classes = list(self.read_class_names("./classes/coco_allowed.names").values())
 
     def load_yolo(self):
         pass
@@ -67,21 +68,9 @@ class ObjectDetection(object):
 
         return pred_bbox
 
-    def calculate_nearest_point(self, depth_map, c1, c2):
-        x, y = c1
-        x2, y2 = c2
-        x = int(x)
-        y = int(y)
-        x2 = int(x2)
-        y2 = int(y2)
 
-        obstacle_depth = depth_map[y:y2, x:x2]
-        closest_point_depth = obstacle_depth.min()
-
-        return closest_point_depth
-
-    def draw_bbox(self, image, bboxes, depth_map, show_label=True):
-        img_traffic = image # Used in raffic lights classification
+    def draw_bbox(self, image, bboxes, depth_map, show_label=True, Depth_by_bbox=True):
+        img_traffic = image # Used in traffic lights classification
         colors_dict = {'Green':0, 'Yellow':0, 'Red':0, 'Unknown color':10}
         
         image = np.float32(image)
@@ -118,11 +107,19 @@ class ObjectDetection(object):
                 c1, c2 = (coor[1], coor[0]), (coor[3], coor[2])
                 cv2.rectangle(image, c1, c2, bbox_color, bbox_thick)
                 
-                depth = self.calculate_nearest_point(depth_map, c1, c2)
-                cv2.putText(image, str(depth)+' m', (c1[0], np.float32(c1[1] - 2)), cv2.FONT_HERSHEY_SIMPLEX,
-                                fontScale, (0, 0, 0), bbox_thick // 2, lineType=cv2.LINE_AA)
+                # Using Disparity map to calculate depth
+                if not Depth_by_bbox or self.classes[class_ind] != 'car':
+                    depth = depth_estimator.calculate_nearest_point(depth_map, c1, c2)
+                    cv2.putText(image, str('%.2f'% depth)+' m', (c1[0], np.float32(c1[1] - 2)), cv2.FONT_HERSHEY_SIMPLEX,
+                                    fontScale, (0, 0, 0), bbox_thick // 2, lineType=cv2.LINE_AA)
                 
-                ## Traffic lights classification
+                # Using bounding box to calculate depth
+                if Depth_by_bbox and self.classes[class_ind] == 'car' :
+                    dist = depth_estimator.clac_distance_bbox_width(int(coor[3]) - int(coor[1]))
+                    cv2.putText(image, str('%.2f'% dist)+' m', (c1[0], np.float32(c1[1] - 2)), cv2.FONT_HERSHEY_SIMPLEX,
+                                    fontScale, (0, 255, 0), thickness=2, lineType=cv2.LINE_AA)
+                
+                # Traffic lights classification
                 if self.classes[class_ind] == 'traffic light':
                     pic = img_traffic[int(coor[0]):int(coor[2]), int(coor[1]):int(coor[3]), :] # crop the traffic light
                     
@@ -133,14 +130,13 @@ class ObjectDetection(object):
                     colors_dict['red'] = cv2.inRange(hsv, (106,0,245), (120,255,255)).sum()
                     
                     traffic_color = max(colors_dict, key=colors_dict.get) # save the most appeared color in the range of hsv
-                
-                if self.classes[class_ind] == 'traffic light':
-                        bbox_mess = '%s, %s: %.2f' % (str(traffic_color), self.classes[class_ind], score) # add traffic light color to the label
-                        
+                         
                         
                 if show_label:
-
-                    bbox_mess = '%s: %.2f' % (self.classes[class_ind], score)
+                    if self.classes[class_ind] == 'traffic light':
+                        bbox_mess = '%s, %s: %.2f' % (str(traffic_color), self.classes[class_ind], score) # add traffic light color to the label
+                    else:
+                        bbox_mess = '%s: %.2f' % (self.classes[class_ind], score)
                         
                     t_size = cv2.getTextSize(bbox_mess, 0, fontScale, thickness=bbox_thick // 2)[0]
                     c3 = (c1[0] + t_size[0], c1[1] - t_size[1] - 3)
@@ -149,4 +145,16 @@ class ObjectDetection(object):
 
                     cv2.putText(image, bbox_mess, (c1[0], np.float32(c1[1] - 2)), cv2.FONT_HERSHEY_SIMPLEX,
                                 fontScale, (0, 0, 0), bbox_thick // 2, lineType=cv2.LINE_AA)
+                
+                elif self.classes[class_ind] == 'traffic light':
+                    bbox_mess = '%s, %s' % (str(traffic_color), self.classes[class_ind]) # add traffic light color to the label
+                    
+                    t_size = cv2.getTextSize(bbox_mess, 0, fontScale, thickness=bbox_thick // 2)[0]
+                    c3 = (c1[0] + t_size[0], c1[1] - t_size[1] - 3)
+                    
+                    cv2.rectangle(image, c1, (np.float32(c3[0]), np.float32(c3[1])), bbox_color, -1) #filled
+
+                    cv2.putText(image, bbox_mess, (c1[0], np.float32(c1[1] - 2)), cv2.FONT_HERSHEY_SIMPLEX,
+                                fontScale, (0, 0, 0), bbox_thick // 2, lineType=cv2.LINE_AA)
+                
         return image
