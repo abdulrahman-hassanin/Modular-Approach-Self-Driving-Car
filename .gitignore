@@ -3,3 +3,4 @@
 /perception/checkpoints/yolov4-416/variables
 /perception/checkpoints/yolov4-416/saved_model.pb
 /perception/CULane/*
+/perception/__pycache__
