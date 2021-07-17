@@ -72,7 +72,7 @@ class ObjectDetection(object):
         return pred_bbox
 
 
-    def draw_bbox(self, image, bboxes, depth_map, show_label=True, Depth_by_bbox=True):
+    def draw_bbox(self, image, bboxes, points, mode='point_cloud', show_label=True, Depth_by_bbox=True):
         img_traffic = image # Used in traffic lights classification
         colors_dict = {'Green':0, 'Yellow':0, 'Red':0, 'Unknown color':10}
         
@@ -112,9 +112,14 @@ class ObjectDetection(object):
                 
                 # Using Disparity map to calculate depth
                 if not Depth_by_bbox or self.classes[class_ind] != 'car':
-                    depth = depth_estimator.calculate_nearest_point(depth_map, c1, c2)
-                    cv2.putText(image, str('%.2f'% depth)+' m', (c1[0], np.float32(c1[1] - 2)), cv2.FONT_HERSHEY_SIMPLEX,
-                                    fontScale, (0, 0, 0), bbox_thick // 2, lineType=cv2.LINE_AA)
+                    if mode == 'point_cloud':
+                        x, y, z, p = depth_estimator.calculate_distance_from_point_cloud(points, c1, c2)
+                        cv2.putText(image, str('%.2f'% p)+' m', (c1[0], np.float32(c1[1] - 2)), cv2.FONT_HERSHEY_SIMPLEX,
+                                    fontScale, (0, 0, 255), bbox_thick // 2, lineType=cv2.LINE_AA)
+                    else:
+                        depth = depth_estimator.calculate_nearest_point(points, c1, c2)
+                        cv2.putText(image, str('%.2f'% depth)+' m', (c1[0], np.float32(c1[1] - 2)), cv2.FONT_HERSHEY_SIMPLEX,
+                                    fontScale, (0, 0, 255), bbox_thick // 2, lineType=cv2.LINE_AA)
                 
                 # Using bounding box to calculate depth
                 if Depth_by_bbox and self.classes[class_ind] == 'car' :

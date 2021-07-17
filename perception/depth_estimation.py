@@ -11,21 +11,28 @@ class DepthEstimation():
         self.img_height = 1080//2
         self.view_fov = 90
         self.focal_length = self.img_width / (2.0 * np.tan(self.view_fov * np.pi / 360.0))
-        self.K = None
+        self.base_line = 0.4
+        self.Q = None
         self.disparity_left = None
         self.depth_map = None
         self.nearest_point = None
+        self.build_projection_matrix()
 
     def build_projection_matrix(self):
         # Define K Projection matrix
         # k = [[Fx,  0, IMG_hight/2],
         #      [ 0, Fy, IMG_width/2],
         #      [ 0,  0,           1]]
-        self.K = np.identity(3)
-        self.K[0, 0] = self.focal_length
-        self.K[1, 1] = self.focal_length
-        self.K[0, 2] = self.img_height / 2.0
-        self.K[1, 2] = self.img_width  / 2.0
+        # self.K = np.identity(3)
+        # self.K[0, 0] = self.focal_length
+        # self.K[1, 1] = self.focal_length
+        # self.K[0, 2] = self.img_height / 2.0
+        # self.K[1, 2] = self.img_width  / 2.0
+        
+        self.Q = np.float32([[1, 0, 0, -self.img_width / 2],
+                            [0, 1, 0, -self.img_height / 2],
+                            [0, 0, 0, self.focal_length],
+                            [0, 0, 1/self.base_line, 0]])
 
     def compute_left_disparity_map(self, img_left, img_right):
         # Parameters
@@ -46,6 +53,25 @@ class DepthEstimation():
         disp_left = left_matcher_SGBM.compute(img_left, img_right).astype(np.float32)/16
         
         return disp_left
+
+    def calculate_distance_from_point_cloud(self, point_cloud, c1, c2):
+        x, y = c1
+        x2, y2 = c2
+        x = int(x)
+        y = int(y)
+        x2 = int(x2)
+        y2 = int(y2)
+
+        obstacle_depth = point_cloud[y:y2, x:x2, :]
+        X, Y, Z = obstacle_depth[:, :, 0].mean(), obstacle_depth[:, :, 1].mean(), obstacle_depth[:, :, 2].mean()
+        P = np.sqrt(X**2 + Y**2 + Z**2)
+        return X, Y, Z, P
+
+    def calc_point_cloud(self, disparity):
+        points = cv2.reprojectImageTo3D(disparity, self.Q)
+        points = np.reshape(points, (self.img_height, self.img_width, 3))
+        return points
+
 
     def calc_depth_map(self, disp_left):
         f = self.focal_length
