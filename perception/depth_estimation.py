@@ -22,7 +22,7 @@ class DepthEstimation():
         self.disparity_left = None
         self.depth_map = None
         self.nearest_point = None
-        self.PSMNet = None
+        self.PSMNet = self.load_PSMNet()
         self.build_projection_matrix()
 
     def load_PSMNet(self, cuda=True, model='stackhourglass', maxdisp=192, model_path='./PSMNet_asset/trained/pretrained_model_KITTI2015.tar'):
