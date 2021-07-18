@@ -3,6 +3,12 @@ import cv2
 import colorsys
 import random
 
+import torch
+import torch.nn as nn
+import torchvision.transforms as transforms
+import torch.nn.functional as F
+from PSMNet_asset.models import *
+
 class DepthEstimation():
     def __init__(self):
         self.left_img = None
@@ -16,7 +22,77 @@ class DepthEstimation():
         self.disparity_left = None
         self.depth_map = None
         self.nearest_point = None
+        self.PSMNet = None
         self.build_projection_matrix()
+
+    def load_PSMNet(self, cuda=True, model='stackhourglass', maxdisp=192, model_path='./PSMNet_asset/trained/pretrained_model_KITTI2015.tar'):
+        if model == 'stackhourglass':
+            self.PSMNet = stackhourglass(maxdisp)
+        else:
+            self.PSMNet = basic(maxdisp)
+
+        self.PSMNet = nn.DataParallel(self.PSMNet, device_ids=[0])
+        self.PSMNet.cuda()
+        
+        state_dict = torch.load(model_path)
+        self.PSMNet.load_state_dict(state_dict['state_dict'])
+
+    def PSMNet_pred(self, imgL, imgR, cuda=True):
+        imgL, imgR = self.procesing_left_right_img(self, imgL, imgR)
+        
+        self.PSMNet.eval()
+
+        if cuda:
+           imgL = imgL.cuda()
+           imgR = imgR.cuda()     
+
+        with torch.no_grad():
+            disp = self.PSMNet(imgL,imgR)
+
+        disp = torch.squeeze(disp)
+        pred_disp = disp.data.cpu().numpy()
+
+        return pred_disp
+
+    def compute_disparity_PSMNet(self, imgL_o, imgR_o):
+        normal_mean_var = {'mean': [0.485, 0.456, 0.406],
+                            'std': [0.229, 0.224, 0.225]}
+        infer_transform = transforms.Compose([transforms.ToTensor(),
+                                              transforms.Normalize(**normal_mean_var)])    
+
+        imgL = infer_transform(imgL_o)
+        imgR = infer_transform(imgR_o)
+
+        # pad to width and hight to 16 times
+        if imgL.shape[1] % 16 != 0:
+            times = imgL.shape[1]//16       
+            top_pad = (times+1)*16 -imgL.shape[1]
+        else:
+            top_pad = 0
+
+        if imgL.shape[2] % 16 != 0:
+            times = imgL.shape[2]//16                       
+            right_pad = (times+1)*16-imgL.shape[2]
+        else:
+            right_pad = 0    
+
+        imgL = F.pad(imgL,(0,right_pad, top_pad,0)).unsqueeze(0)
+        imgR = F.pad(imgR,(0,right_pad, top_pad,0)).unsqueeze(0)
+
+        pred_disp = self.PSMNet_pred(imgL,imgR)
+        
+        if top_pad !=0 and right_pad != 0:
+            img = pred_disp[top_pad:,:-right_pad]
+        elif top_pad ==0 and right_pad != 0:
+            img = pred_disp[:,:-right_pad]
+        elif top_pad !=0 and right_pad == 0:
+            img = pred_disp[top_pad:,:]
+        else:
+            img = pred_disp
+        
+        img = (img*256).astype('uint16')
+        
+        return img
 
     def build_projection_matrix(self):
         # Define K Projection matrix
@@ -71,7 +147,6 @@ class DepthEstimation():
         points = cv2.reprojectImageTo3D(disparity, self.Q)
         points = np.reshape(points, (self.img_height, self.img_width, 3))
         return points
-
 
     def calc_depth_map(self, disp_left):
         f = self.focal_length

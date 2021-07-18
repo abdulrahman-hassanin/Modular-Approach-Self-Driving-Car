@@ -37,7 +37,9 @@ def render(display, image_left, image_right):
         img_right = img_right[:, :, :3]
 
         
-        disp_left = depth_estimator.compute_left_disparity_map(img_left, img_right)
+        # disp_left = depth_estimator.compute_left_disparity_map(img_left, img_right)
+        disp_left = depth_estimator.compute_disparity_PSMNet(img_left, img_right)
+        
         # depth_map = depth_estimator.calc_depth_map(disp_left)
         point_cloud = depth_estimator.calc_point_cloud(disp_left)
 
