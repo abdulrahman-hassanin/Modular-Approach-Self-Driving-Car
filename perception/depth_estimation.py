@@ -39,7 +39,7 @@ class DepthEstimation():
         self.PSMNet.load_state_dict(state_dict['state_dict'])
 
     def PSMNet_pred(self, imgL, imgR, cuda=True):
-        imgL, imgR = self.procesing_left_right_img(self, imgL, imgR)
+        #imgL, imgR = self.procesing_left_right_img(self, imgL, imgR)
         
         self.PSMNet.eval()
 
@@ -60,10 +60,8 @@ class DepthEstimation():
                             'std': [0.229, 0.224, 0.225]}
         infer_transform = transforms.Compose([transforms.ToTensor(),
                                               transforms.Normalize(**normal_mean_var)])    
-
         imgL = infer_transform(imgL_o)
         imgR = infer_transform(imgR_o)
-
         # pad to width and hight to 16 times
         if imgL.shape[1] % 16 != 0:
             times = imgL.shape[1]//16       
@@ -79,9 +77,7 @@ class DepthEstimation():
 
         imgL = F.pad(imgL,(0,right_pad, top_pad,0)).unsqueeze(0)
         imgR = F.pad(imgR,(0,right_pad, top_pad,0)).unsqueeze(0)
-
         pred_disp = self.PSMNet_pred(imgL,imgR)
-        
         if top_pad !=0 and right_pad != 0:
             img = pred_disp[top_pad:,:-right_pad]
         elif top_pad ==0 and right_pad != 0:

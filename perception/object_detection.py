@@ -116,7 +116,7 @@ class ObjectDetection(object):
                         x, y, z, p = depth_estimator.calculate_distance_from_point_cloud(points, c1, c2)
                         cv2.putText(image, str('%.2f'% p)+' m', (c1[0], np.float32(c1[1] - 2)), cv2.FONT_HERSHEY_SIMPLEX,
                                     fontScale, (0, 0, 255), bbox_thick // 2, lineType=cv2.LINE_AA)
-                    else:
+                    elif mode == 'nearest_point':
                         depth = depth_estimator.calculate_nearest_point(points, c1, c2)
                         cv2.putText(image, str('%.2f'% depth)+' m', (c1[0], np.float32(c1[1] - 2)), cv2.FONT_HERSHEY_SIMPLEX,
                                     fontScale, (0, 0, 255), bbox_thick // 2, lineType=cv2.LINE_AA)

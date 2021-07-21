@@ -11,7 +11,7 @@ import depth_estimation
 import glob
 import os
 import sys
-
+import time
 try:
     sys.path.append(glob.glob('../carla/dist/carla-*%d.%d-%s.egg' % (
         sys.version_info.major,
@@ -36,15 +36,31 @@ def render(display, image_left, image_right):
         img_right = np.reshape(img_right, (image_right.height, image_right.width, 4))
         img_right = img_right[:, :, :3]
 
+        m = 'point_cloud'
         
-        # disp_left = depth_estimator.compute_left_disparity_map(img_left, img_right)
-        disp_left = depth_estimator.compute_disparity_PSMNet(img_left, img_right)
+        if m == 'point_cloud':
+            s = time.time()
+            disp_left = depth_estimator.compute_disparity_PSMNet(img_left, img_right)
+            cv2.imwrite('temp.png', disp_left)
+            disp_left = cv2.imread('temp.png')
+            disp_left = cv2.cvtColor(disp_left, cv2.COLOR_BGR2GRAY)
+            cv2.imshow('disp map', disp_left)
+            point_cloud = depth_estimator.calc_point_cloud(disp_left)
+            points = point_cloud
+            e = time.time()
+            t = e - s
+            fps = 1/(t)
+            s = "FPS : "+ str('%.2f'% fps)
+            print(s)
         
-        # depth_map = depth_estimator.calc_depth_map(disp_left)
-        point_cloud = depth_estimator.calc_point_cloud(disp_left)
-
+        elif m == 'nearest_point':
+            disp_left = depth_estimator.compute_left_disparity_map(img_left, img_right)
+            depth_map = depth_estimator.calc_depth_map(disp_left)
+            
+            points = depth_map
+            
         pred_bboxes = obj_detector.detect(img_left)
-        array = obj_detector.draw_bbox(img_left, pred_bboxes, point_cloud, mode = 'point_cloud', show_label=False, Depth_by_bbox=False)
+        array = obj_detector.draw_bbox(img_left, pred_bboxes, points, mode = m, show_label=False, Depth_by_bbox=False)
         #array = depth_estimator.put_distance_txt(array, depth_map, pred_bboxes, obj_detector.classes, obj_detector.allowed_classes)
 
         array = array[:, :, ::-1]
