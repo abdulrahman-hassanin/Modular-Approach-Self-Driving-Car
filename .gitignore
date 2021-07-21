@@ -4,6 +4,7 @@
 /perception/checkpoints/yolov4-416/saved_model.pb
 /perception/CULane/*
 /perception/PSMNet_asset/trained/pretrained_model_KITTI2015.tar
+/perception/PSMNet_asset/models/__pycache__
 /perception/__pycache__
 /planning/__pycache__
 /planning/agents/__pycache__
