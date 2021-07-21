@@ -5,7 +5,7 @@
 #########################################################################
 import torch
 import torch.nn as nn
-from parameters import Parameters
+from CULane.parameters import Parameters
 
 p = Parameters()
 

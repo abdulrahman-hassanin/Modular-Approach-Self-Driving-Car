@@ -5,7 +5,7 @@
 #########################################################################
 import torch
 import torch.nn as nn
-from util_hourglass import *
+from CULane.util_hourglass import *
 
 ####################################################################
 ##

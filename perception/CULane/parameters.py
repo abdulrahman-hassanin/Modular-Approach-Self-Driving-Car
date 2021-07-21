@@ -9,8 +9,8 @@ class Parameters():
     n_epoch = 1000
     l_rate = 0.001
     weight_decay=1e-5
-    save_path = "savefile/"
-    model_path = "savefile/"
+    save_path = "Lane_weights/"
+    model_path = "Lane_weights/"
     batch_size = 12
     x_size = 512
     y_size = 256

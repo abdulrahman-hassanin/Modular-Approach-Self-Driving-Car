@@ -5,7 +5,7 @@ from copy import deepcopy
 import numpy as np
 from torch.autograd import Variable
 from torch.autograd import Function as F
-from parameters import Parameters
+from CULane.parameters import Parameters
 import math
 
 p = Parameters()
@@ -79,12 +79,13 @@ def visualize_regression(image, gt):
 
 def draw_points(x, y, image):
     color_index = 0
+    circle_raduis = 4
     for i, j in zip(x, y):
         color_index += 1
         if color_index > 12:
             color_index = 12
         for index in range(len(i)):
-            image = cv2.circle(image, (int(i[index]), int(j[index])), 5, p.color[color_index], -1)
+            image = cv2.circle(image, (int(i[index]), int(j[index])), circle_raduis, p.color[color_index], -1)
 
     return image
 

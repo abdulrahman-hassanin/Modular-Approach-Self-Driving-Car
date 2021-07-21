@@ -6,16 +6,16 @@
 
 import torch.nn as nn
 import torch
-from util_hourglass import *
+from CULane.util_hourglass import *
 from copy import deepcopy
 import numpy as np
 from torch.autograd import Variable
-from hourglass_network import lane_detection_network
+from CULane.hourglass_network import lane_detection_network
 from torch.autograd import Function as F
-from parameters import Parameters
+from CULane.parameters import Parameters
 import math
-import util
-import hard_sampling
+from CULane import util
+from CULane import hard_sampling
 
 ############################################################
 ##

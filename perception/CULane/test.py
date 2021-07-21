@@ -7,13 +7,13 @@
 import cv2
 import json
 import torch
-import agent
+import CULane.agent
 import numpy as np
 from copy import deepcopy
-from data_loader import Generator
+from CULane.data_loader import Generator
 import time
-from parameters import Parameters
-import util
+from CULane.parameters import Parameters
+import CULane.util
 import os
 from tqdm import tqdm
 from sklearn.linear_model import LinearRegression

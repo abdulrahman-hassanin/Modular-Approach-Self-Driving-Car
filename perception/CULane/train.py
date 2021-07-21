@@ -9,13 +9,13 @@ import torch
 import visdom
 #import sys
 #sys.path.append('/home/kym/research/autonomous_car_vision/lanedection/code/')
-import agent
+import CULane.agent
 import numpy as np
-from data_loader import Generator
-from parameters import Parameters
-import test
+from CULane.data_loader import Generator
+from CULane.parameters import Parameters
+import CULane.test
 import evaluation
-import util
+import CULane.util
 import os
 import copy
 
