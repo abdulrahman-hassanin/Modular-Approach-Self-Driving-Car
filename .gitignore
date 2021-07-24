@@ -14,3 +14,9 @@
 /planning2/agents/__pycache__
 /planning2/agents/navigation/__pycache__
 /planning2/agents/tools/__pycache__
+/System Integration/checkpoints/yolov4-416/assets
+/System Integration/checkpoints/yolov4-416/variables
+/System Integration/checkpoints/yolov4-416/saved_model.pb
+/System Integration/PSMNet_asset/trained/pretrained_model_KITTI2015.tar
+/System Integration/PSMNet_asset/models/__pycache__
+/System Integration/__pycache__
