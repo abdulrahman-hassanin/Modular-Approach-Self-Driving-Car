@@ -66,25 +66,8 @@ def render(display, image_left, image_right):
         #array = depth_estimator.put_distance_txt(array, depth_map, pred_bboxes, obj_detector.classes, obj_detector.allowed_classes)
 
         array = array[:, :, ::-1]
-        #surface = pygame.surfarray.make_surface(array.swapaxes(0, 1))
-        #display.blit(surface, (0, 0))
         
-        ########
-        img = cv2.resize(img_left, None, fx=1, fy=1)
-        height, width, channels = img.shape
-        blob = cv2.dnn.blobFromImage(img, scalefactor=0.00392, size=(320, 320), mean=(0, 0, 0), swapRB=True, crop=False)
-        img = cv2.resize(img, (512,256))/255.0
-        img = np.rollaxis(img, axis=2, start=0)
-        _, _, ti = lane_detector.detect(np.array([img]))
-
-        mask_gray = cv2.cvtColor(ti[0], cv2.COLOR_RGB2GRAY)
-        mask_gray = np.where(mask_gray>0 , 255, mask_gray)
-
-        mask_inv = cv2.bitwise_not(mask_gray)
-
-        image_masked = cv2.bitwise_and(array, array, mask=mask_inv)
-
-        array = np.add(image_masked, ti[0])
+        array = lane_detector.detect_draw_lane(img_left, array)
 
         surface = pygame.surfarray.make_surface(array.swapaxes(0, 1))
         display.blit(surface, (0, 0))

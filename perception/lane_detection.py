@@ -16,27 +16,14 @@
 """
 
 # Import modules
-import os
 import cv2
-import json
 import torch
-import time
-import carla
-import csaps
-import random
-import weakref
-import pygame
 import numpy as np
-from tqdm import tqdm
-from patsy import cr
 from copy import deepcopy
 from CULane import util
 from CULane import agent
 from CULane.data_loader import Generator
 from CULane.parameters import Parameters
-from CULane.utils import pre_processing
-from imutils.video import FPS
-from sklearn.linear_model import LinearRegression
 
 p = Parameters()
 # Lane detecton class
@@ -176,48 +163,20 @@ class LaneDetection():
                     
         return x, y
 
-    def render(self, obj_detector, depth_estimator, lane_detector, display, image_left, image_right):
-        """ Function used for rendering object detector and depth estimator """
-        if image_left is not None and image_right is not None:
-            img_left = np.frombuffer(image_left.raw_data, dtype=np.dtype("uint8"))
-            img_left = np.reshape(img_left, (image_left.height, image_left.width, 4))
-            img_left = img_left[:, :, :3]
-            
-            img_right = np.frombuffer(image_right.raw_data, dtype=np.dtype("uint8"))
-            img_right = np.reshape(img_right, (image_right.height, image_right.width, 4))
-            img_right = img_right[:, :, :3]
+    def detect_draw_lane(self, img_left, array):
+        img = cv2.resize(img_left, None, fx=1, fy=1)
+        height, width, channels = img.shape
+        blob = cv2.dnn.blobFromImage(img, scalefactor=0.00392, size=(320, 320), mean=(0, 0, 0), swapRB=True, crop=False)
+        img = cv2.resize(img, (512,256))/255.0
+        img = np.rollaxis(img, axis=2, start=0)
+        _, _, ti = self.detect(np.array([img]))
 
-            disp_left = depth_estimator.compute_left_disparity_map(img_left, img_right)
-            depth_map = depth_estimator.calc_depth_map(disp_left)
+        mask_gray = cv2.cvtColor(ti[0], cv2.COLOR_RGB2GRAY)
+        mask_gray = np.where(mask_gray>0 , 255, mask_gray)
 
-            pred_bboxes = obj_detector.detect(img_left)
-            array   = obj_detector.draw_bbox(img_left, pred_bboxes, depth_map, show_label=False, Depth_by_bbox=False)
-            array   = array[:, :, ::-1]
-            #surface = pygame.surfarray.make_surface(array.swapaxes(0, 1))
-            #display.blit(surface, (0, 0))
+        mask_inv = cv2.bitwise_not(mask_gray)
 
-            # Lane detection 
-            img = cv2.resize(img_left, None, fx=1, fy=1)
-            height, width, channels = img.shape
-            blob = cv2.dnn.blobFromImage(img, scalefactor=0.00392, size=(320, 320), mean=(0, 0, 0), swapRB=True, crop=False)
-            img = cv2.resize(img, (512,256))/255.0
-            img = np.rollaxis(img, axis=2, start=0)
-            _, _, ti = lane_detector.detect(np.array([img]))
+        image_masked = cv2.bitwise_and(array, array, mask=mask_inv)
 
-            mask_gray = cv2.cvtColor(ti[0], cv2.COLOR_RGB2GRAY)
-            mask_gray = np.where(mask_gray>0 , 255, mask_gray)
-
-            mask_inv = cv2.bitwise_not(mask_gray)
-
-            image_masked = cv2.bitwise_and(array, array, mask=mask_inv)
-
-            array = np.add(image_masked, ti[0])
-
-            surface = pygame.surfarray.make_surface(array.swapaxes(0, 1))
-            display.blit(surface, (0, 0))
-            
-            
-            
-            
-            
-     
+        array = np.add(image_masked, ti[0])
+        return array
