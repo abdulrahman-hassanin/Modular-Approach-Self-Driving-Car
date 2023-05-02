@@ -50,3 +50,7 @@
 ### Planning
 
 * [A Survey of Motion Planning and Control Techniques for Self-driving Urban Vehicles](https://arxiv.org/abs/1604.07446) - 2016
+
+
+## Courses
+* [Self-Driving Cars Specialization](https://www.coursera.org/specializations/self-driving-cars) - This Specialization gives a comprehensive understanding of state-of-the-art engineering practices used in the self-driving car industry. The Specialization includes 3 courses: 1- Introduction to Self-Driving Cars, 2- State Estimation and Localization for Self-Driving Cars, 3- Visual Perception for Self-Driving Cars, 4- Motion Planning for Self-Driving Cars
