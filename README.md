@@ -1,7 +1,15 @@
-# Pyramid Stereo Matching Network (PSMnet)
+<br/>
+<p align="center">
+  <h1 align="center">Modular-Approach- Self-Driving Car</h1>
 
-- [paper](https://arxiv.org/abs/1803.08669)
-- [GitHub implemetation](https://github.com/JiaRenChang/PSMNet)
-- [pretrained model](https://drive.google.com/file/d/1pHWjmhKMG4ffCrpcsp_MTXMJXhgl3kF9/view)
+  <p align="center">
+    Simulated in CARLA v0.9.10 Environment.
+    <br/>
+    <br/>
+  </p>
+</p>
 
-- Place pretrained model in /PSMNet_asset/trained
+
+## Environmet
+
+[CARLA](http://carla.org/) has been developed from the ground up to support development, training, and validation of autonomous driving systems. In addition to open-source [code](https://github.com/carla-simulator/carla) and protocols, CARLA provides open digital assets (urban layouts, buildings, vehicles) that were created for this purpose and can be used freely. The simulation platform supports flexible specification of sensor suites, environmental conditions, full control of all static and dynamic actors, maps generation and much more.
