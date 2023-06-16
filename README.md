@@ -18,21 +18,21 @@
 ## Screenshots
 
 <p align="center">
-<img src="doc/gifs/obj lane depth 2.gif" align="center" width=900 height=507 />
+<img src="doc/gifs/obj lane depth 2.gif" align="center" width=100% height=100% />
 </p>
 
 <details>
 <summary>More screenshots</summary>
   
 <p align="center">
-<img src="doc/gifs/obj lane depth 3.gif" align="center" width=900 height=507 />
+<img src="doc/gifs/obj lane depth 3.gif" align="center" width=100% height=100% />
 </p>
 
 ###### Object Detection & Traffic light Classification 
 
 <p align="center">
-  <img src="doc/images/obj_detection 1.png" align="center" width=500 height=290 />
-  <img src="doc/images/obj_detection 2.png" align="center" width=500 height=290 />
+  <img src="doc/images/obj_detection 1.png" align="center" width=100% height=100% />
+  <img src="doc/images/obj_detection 2.png" align="center" width=100% height=100% />
 </p>
 
 ###### Depth Estimation
