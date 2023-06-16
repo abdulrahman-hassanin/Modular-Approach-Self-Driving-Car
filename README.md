@@ -1,6 +1,6 @@
 <br/>
 <p align="center">
-  <h1 align="center">Modular-Approach- Self-Driving Car</h1>
+  <h1 align="center">Modular-Approach Self-Driving Car</h1>
 
   <p align="center">
     Simulated in CARLA v0.9.10 Environment.
@@ -10,13 +10,47 @@
 </p>
 
 
-## Environmet
+## Environment
 
 [CARLA](http://carla.org/) has been developed from the ground up to support development, training, and validation of autonomous driving systems. In addition to open-source [code](https://github.com/carla-simulator/carla) and protocols, CARLA provides open digital assets (urban layouts, buildings, vehicles) that were created for this purpose and can be used freely. The simulation platform supports flexible specification of sensor suites, environmental conditions, full control of all static and dynamic actors, maps generation and much more.
 
 
-## Papers
+## Screenshots
 
+<p align="center">
+<img src="doc/gifs/obj lane depth 2.gif" align="center" width=900 height=507 />
+</p>
+
+<details>
+<summary>More screenshots</summary>
+  
+<p align="center">
+<img src="doc/gifs/obj lane depth 3.gif" align="center" width=900 height=507 />
+</p>
+
+###### Object Detection & Traffic light Classification 
+
+<p align="center">
+  <img src="doc/images/obj_detection 1.png" align="center" width=500 height=290 />
+  <img src="doc/images/obj_detection 2.png" align="center" width=500 height=290 />
+</p>
+
+###### Depth Estimation
+
+<p align="center">
+  <img src="doc/images/Depth 1.jpg" align="center" width=100% height=100% />
+</p>
+
+###### Lane Detection
+
+<p align="center">
+  <img src="doc/images/Lane 3.png" align="center" width=100% height=100% />
+</p>
+  
+</details>
+
+
+## Papers
 
 ### Overview
 * [A Survey of Autonomous Driving: Common Practices and Emerging Technologies](https://arxiv.org/pdf/1906.05113.pdf) - 2020
@@ -29,14 +63,11 @@
 
 * [YOLOv4: Optimal Speed and Accuracy of Object Detection](https://arxiv.org/abs/2004.10934) - 2020
 
-
-
 ###### Lane Detection
 
 * [Key Points Estimation and Point Instance Segmentation Approach for Lane Detection](https://arxiv.org/abs/2002.06604) - 2020 
 
   * [GitHub implemetation](https://github.com/koyeongmin/PINet)
-
 
 ###### Depth Estimation
 
@@ -45,7 +76,6 @@
   * [GitHub implemetation](https://github.com/JiaRenChang/PSMNet)
 
 * [Key Points Estimation and Point Instance Segmentation Approach for Lane Detection](https://arxiv.org/abs/2002.06604) - 2020 
-
 
 ### Planning
 
