@@ -31,8 +31,8 @@
 ###### Object Detection & Traffic light Classification 
 
 <p align="center">
-  <img src="doc/images/obj_detection 1.png" align="center" width=100% height=100% />
-  <img src="doc/images/obj_detection 2.png" align="center" width=100% height=100% />
+  <img src="doc/images/obj_detection 1.png"  width=100% height=100% />
+  <img src="doc/images/obj_detection 2.png"  width=100% height=100% />
 </p>
 
 ###### Depth Estimation
