@@ -18,13 +18,15 @@
 ## Screenshots
 
 <p align="center">
-<img src="doc/gifs/obj lane depth 3.gif" align="center" width=100% height=100% />
+<img src="doc/gifs/obj lane depth 2.gif" align="center" width=100% height=100% />
 </p>
 
 <details>
 <summary>More screenshots</summary>
   
-
+<p align="center">
+<img src="doc/gifs/obj lane depth 3.gif" align="center" width=100% height=100% />
+</p>
 
 ###### Object Detection & Traffic light Classification 
 
